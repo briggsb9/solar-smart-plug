@@ -1,4 +1,4 @@
-# Solar Power and Smart Plug Automation (Work In Progress)
+# Solar Power (SolarEdge) and Smart Plug (D-Link W115) Automation (Work In Progress)
 
 ## Overview
 
@@ -23,6 +23,8 @@ This Python script integrates solar power monitoring and smart plug control to o
 
 - Python 3.x
 - Requests library for HTTP requests (`pip install requests`)
+- Currently only configured to support SolarEdge Solar Systems via their API
+- D-LINK DSP W115 Smart Plug (other models may work with minor modifications)
 
 ## Usage
 
