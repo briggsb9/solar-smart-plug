@@ -3,3 +3,4 @@ solar-smart-plug.log
 __pycache__/config.cpython-311.pyc
 __pycache__/dspW245.cpython-312.pyc
 __pycache__/dspW245.cpython-311.pyc
+solarProductionAdvisor/advisorConfig.py
