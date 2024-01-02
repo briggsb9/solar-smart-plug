@@ -11,7 +11,8 @@ def fetch_solar_production(test_json_path=None):
     """
     Fetch solar production estimates from the Forecast Solar API or use data from a test JSON file.
     """
-    if test_json_path:
+    if advisorConfig.use_test_data:
+        test_json_path = advisorConfig.test_json_path
         try:
             with open(test_json_path, 'r') as file:
                 solar_data = json.load(file)
@@ -92,14 +93,7 @@ def send_message_to_telegram(message):
 
 def main():
 
-    test_solar_data = fetch_solar_production(test_json_path='./test.json')
-
-    if test_solar_data is None:
-        logging.warning("Test data not available. Fetching from the actual API.")
-        solar_data = fetch_solar_production()
-    else:
-        logging.info("Using test data.")
-        solar_data = test_solar_data
+    solar_data = fetch_solar_production()
 
     if solar_data is not None:
         peak_hour, peak_power, optimal_period_start, optimal_period_end = analyze_solar_data(solar_data)
