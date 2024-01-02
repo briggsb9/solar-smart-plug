@@ -4,6 +4,10 @@
 
 This Python script integrates solar power monitoring and smart plug control with a view to optimize energy usage. The script fetches real-time solar power data from the SolarEdge API and utilizes the information to manage the D-LINK W115 smart plug. The goal is to automate the plug's state based on solar power levels, enhancing energy efficiency and sustainability.
 
+
+> **Note:**
+> For more a more manual approach, I've also created a Solar Production Forecast Advisor to notify residents of the best time of day to use electrical devices, see [solarProductionAdvisor/README.md](solarProductionAdvisor/README.md)
+
 ## Features
 
 - **Solar Power Monitoring:**
@@ -45,10 +49,4 @@ This Python script integrates solar power monitoring and smart plug control with
 
 ## Acknowledgments
 
-This project is built upon a modified version of the [dspW245](https://github.com/jonassjoh/dspW245) project by Jonas Johansson. The original project provides a Python interface for interacting with DSP-W245 smart plugs.
-
-- Original Author: Jonas Johansson
-- Original Repository: [dspW245](https://github.com/jonassjoh/dspW245)
-- License: [MIT License](https://opensource.org/licenses/MIT)
-
-We express our gratitude to Jonas Johansson for the foundation provided by the dspW245 project.
+This project is built upon a modified version of the [dspW245](https://github.com/jonassjoh/dspW245) project by Jonas Johansson. The original project provides a Python interface for interacting with DSP-W245 smart plugs. Many thanks to Jonas Johansson for most of the hard work.
