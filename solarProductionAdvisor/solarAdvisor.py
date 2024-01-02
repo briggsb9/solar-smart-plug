@@ -7,7 +7,7 @@ import json
 # Set up logging
 logging.basicConfig(filename=advisorConfig.logfile, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def fetch_solar_production(test_json_path=None):
+def fetch_solar_production():
     """
     Fetch solar production estimates from the Forecast Solar API or use data from a test JSON file.
     """
@@ -15,7 +15,8 @@ def fetch_solar_production(test_json_path=None):
         test_json_path = advisorConfig.test_json_path
         try:
             with open(test_json_path, 'r') as file:
-                solar_data = json.load(file)
+                solar_data = json.load(file)['result']
+                logging.info("Using test data.")
             return solar_data
         except Exception as e:
             logging.error(f"Error reading test JSON file: {e}")
@@ -25,6 +26,7 @@ def fetch_solar_production(test_json_path=None):
         response = requests.get(advisorConfig.solar_forecast_endpoint)
         response.raise_for_status()
         solar_data = response.json()["result"]
+        logging.info("Fetching data from the actual API.")
         return solar_data
     except Exception as e:
         logging.error(f"Error fetching solar production: {e}")
@@ -33,7 +35,7 @@ def fetch_solar_production(test_json_path=None):
 def analyze_solar_data(solar_data):
 
     current_date = datetime.now().strftime('%Y-%m-%d')
-    today_data = {key: value for key, value in solar_data['result'].items() if key.startswith(current_date)}
+    today_data = {key: value for key, value in solar_data.items() if key.startswith(current_date)}
 
     if not today_data:
         # If there is no data for today, return None for all values
