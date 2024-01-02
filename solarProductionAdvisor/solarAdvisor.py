@@ -61,7 +61,8 @@ def analyze_solar_data(solar_data):
         if current_hour in today_data and today_data[current_hour] >= 0.8 * peak_power:
             window_end = current_hour
         else:
-            break
+            if today_data[current_hour] < 0.8 * peak_power:
+                break
 
     return peak_hour, peak_power, window_start, window_end
 
