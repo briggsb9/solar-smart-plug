@@ -41,17 +41,29 @@ def analyze_solar_data(solar_data):
     peak_hour = max(today_data, key=today_data.get)
     peak_power = today_data[peak_hour]
 
-    window_size = 2  # You can adjust this value to change the window size
-    peak_index = list(today_data.keys()).index(peak_hour)
+    window_start = peak_hour
+    window_end = peak_hour
 
-    # Calculate window start and end indices, considering the edges
-    window_start = max(0, peak_index - window_size)
-    window_end = min(len(today_data), peak_index + window_size + 1)
+    # Specify the number of hours before the peak to include in the window
+    build_up_hours = 2
 
-    current_window_start = list(today_data.keys())[window_start]
-    current_window_end = list(today_data.keys())[window_end - 1]
+    # Find the start of the window, ensuring a build-up to peak power
+    for i in range(build_up_hours + 1):
+        current_hour = (datetime.strptime(peak_hour, '%Y-%m-%d %H:%M:%S') - timedelta(hours=i)).strftime('%Y-%m-%d %H:%M:%S')
+        if current_hour in today_data and today_data[current_hour] >= 0.8 * peak_power:
+            window_start = current_hour
+        else:
+            break
 
-    return peak_hour, peak_power, current_window_start, current_window_end
+    # Find the end of the window, ensuring a decrease in power after peak
+    for i in range(1, len(today_data)):
+        current_hour = (datetime.strptime(peak_hour, '%Y-%m-%d %H:%M:%S') + timedelta(hours=i)).strftime('%Y-%m-%d %H:%M:%S')
+        if current_hour in today_data and today_data[current_hour] >= 0.8 * peak_power:
+            window_end = current_hour
+        else:
+            break
+
+    return peak_hour, peak_power, window_start, window_end
 
 def send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end):
     """
