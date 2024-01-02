@@ -13,9 +13,6 @@ logging.getLogger('').addHandler(console_handler)
 
 logger = logging.getLogger(__name__)
 
-# Get weather
-
-# Determine optimal schedule based on weather a nd send message to telelgram
 
 # Get power output (limited to 300 requests per day)
 
