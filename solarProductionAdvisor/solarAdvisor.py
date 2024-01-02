@@ -1,86 +1,102 @@
 import requests
-from datetime import datetime
 import logging
-from logging.handlers import RotatingFileHandler
+from datetime import datetime, timedelta
+import advisorConfig  # Import all variables from the config module
+import json
 
-# Load all configuration from config.py
-from advisorConfig import *
+# Set up logging
+logging.basicConfig(filename=advisorConfig.logfile, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        RotatingFileHandler(logfile, maxBytes=10*1024*1024, backupCount=5),
-        logging.StreamHandler()
-    ]
-)
-
-def fetch_solar_production(api_url):
+def fetch_solar_production(test_json_path=None):
     """
-    Fetches solar production information from the API.
+    Fetch solar production estimates from the Forecast Solar API or use data from a test JSON file.
     """
+    if test_json_path:
+        try:
+            with open(test_json_path, 'r') as file:
+                solar_data = json.load(file)
+            return solar_data
+        except Exception as e:
+            logging.error(f"Error reading test JSON file: {e}")
+            return None
+
     try:
-        response = requests.get(api_url)
+        response = requests.get(advisorConfig.solar_forecast_endpoint)
         response.raise_for_status()
-
-        solar_data = response.json()["result"]["watt_hours_day"]
+        solar_data = response.json()["result"]
         return solar_data
     except Exception as e:
         logging.error(f"Error fetching solar production: {e}")
-        return {}
+        return None
 
-def find_highest_solar_window(solar_data):
+def analyze_solar_data(solar_data):
+
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    today_data = {key: value for key, value in solar_data['result'].items() if key.startswith(current_date)}
+
+    if not today_data:
+        # If there is no data for today, return None for all values
+        return None, None, None, None
+
+    peak_hour = max(today_data, key=today_data.get)
+    peak_power = today_data[peak_hour]
+
+    window_size = 2  # You can adjust this value to change the window size
+    peak_index = list(today_data.keys()).index(peak_hour)
+
+    # Calculate window start and end indices, considering the edges
+    window_start = max(0, peak_index - window_size)
+    window_end = min(len(today_data), peak_index + window_size + 1)
+
+    current_window_start = list(today_data.keys())[window_start]
+    current_window_end = list(today_data.keys())[window_end - 1]
+
+    return peak_hour, peak_power, current_window_start, current_window_end
+
+def send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end):
     """
-    Finds the time window with the highest cumulative solar output.
+    Send a summary message to a Telegram channel with the identified optimal solar output period.
     """
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    current_day_data = {time: value for time, value in solar_data.items() if time.startswith(current_date)}
-
-    if current_day_data:
-        max_window_start, max_window_end, max_window_output = max(
-            (window_start, window_end, sum(values))
-            for (window_start, values), (_, window_end) in zip(current_day_data.items(), current_day_data.items())
-        )
-
-        return max_window_start, max_window_end, max_window_output
+    if optimal_period_start and optimal_period_end:
+        message = f"Optimal solar output period for today:\nPeak Hour: {peak_hour}\nPeak Power Output: {peak_power}\nStart Time: {optimal_period_start}\nEnd Time: {optimal_period_end}"
+        logging.info("Sending message to Telegram channel.")
+        send_message_to_telegram(message)
     else:
-        return None, None, None
+        logging.warning("No message sent to Telegram channel.")
 
-def send_telegram_message(token, chat_id, message):
+def send_message_to_telegram(message):
     """
-    Sends a text message to a Telegram chat.
+    Send a message to the configured Telegram channel.
     """
     try:
-        telegram_url = f'https://api.telegram.org/bot{token}'
-        send_message_url = f'{telegram_url}/sendMessage'
-        
-        tg_params = {'chat_id': chat_id, 'text': message}
-        response = requests.post(send_message_url, params=tg_params)
+        telegram_url = f'https://api.telegram.org/bot{advisorConfig.token}/sendMessage'
+        tg_params = {'chat_id': advisorConfig.chat_id, 'text': message}
+        response = requests.post(telegram_url, params=tg_params)
         response.raise_for_status()
-        logging.info('Message sent')
+        logging.info('Message sent to Telegram channel.')
     except Exception as e:
-        logging.error(f"Error sending Telegram message: {e}")
+        logging.error(f"Error sending message to Telegram channel: {e}")
 
 def main():
-    # Fetch solar production data
-    solar_data = fetch_solar_production(solar_forecast_endpoint)
 
-    # Find the time window with the highest cumulative solar output
-    max_window_start, max_window_end, max_window_output = find_highest_solar_window(solar_data)
+    test_solar_data = fetch_solar_production(test_json_path='./test.json')
 
-    if max_window_start is not None:
-        # Format the times for better readability
-        max_window_start_formatted = datetime.strptime(max_window_start, "%Y-%m-%d %H:%M:%S").strftime("%H:%M:%S")
-        max_window_end_formatted = datetime.strptime(max_window_end, "%Y-%m-%d %H:%M:%S").strftime("%H:%M:%S")
-
-        # Prepare the message
-        message = f"The time window with the highest cumulative solar output today is from {max_window_start_formatted} to {max_window_end_formatted} with {max_window_output} watt-hours."
-
-        # Send the message to Telegram
-        send_telegram_message(token, chat_id, message)
+    if test_solar_data is None:
+        logging.warning("Test data not available. Fetching from the actual API.")
+        solar_data = fetch_solar_production()
     else:
-        logging.info('No solar output data available for the current day.')
+        logging.info("Using test data.")
+        solar_data = test_solar_data
+
+    if solar_data is not None:
+        peak_hour, peak_power, optimal_period_start, optimal_period_end = analyze_solar_data(solar_data)
+        
+        if peak_hour is not None:
+            send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end)
+        else:
+            logging.warning("No peak hour found.")
+    else:
+        logging.warning("No solar data available.")
 
 if __name__ == "__main__":
     main()

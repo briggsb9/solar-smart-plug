@@ -2,3 +2,6 @@ config.py
 solar-smart-plug.log
 __pycache__/*
 solarProductionAdvisor/advisorConfig.py
+solarProductionAdvisor/solar-production-advisor-log.log
+solarProductionAdvisor/test.json
+solarProductionAdvisor/__pycache__/*
