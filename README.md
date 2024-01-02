@@ -27,19 +27,24 @@ This Python script integrates solar power monitoring and smart plug control with
 
 - Python 3.x
 - Requests library for HTTP requests (`pip install requests`)
-- Currently only configured to support SolarEdge Solar Systems via their API
+- SolarEdge Solar System and access to [monitoring API](https://developers.solaredge.com/docs/monitoring/e9nwvc91l1jf5-getting-started-with-monitoring-api)
 - D-LINK DSP W115 Smart Plug (other models may work with minor modifications)
 
 ## Usage
 
 1. **Obtain API Key:**
-   - Sign up for a SolarEdge API key and configure it in `config.py`.
+   - See [here](https://www.suntribetrading.com/how-to/get-solaredge-api-siteid-and-key) for info on how to get a SolarEdge API key. Configure it in `config.py` to give the script acces to your current solar output.
 
 2. **Configure Smart Plug:**
-   - Adjust smart plug parameters in the script, including IP, PIN, and model.
+   - Adjust smart plug parameters in 'config.py' , including IP, PIN, and model.
 
-3. **Run the Script:**
+3. **Schedule the Script:**
    - Schedule the execution of `solar_power_query.py` to fetch solar power data and control the smart plug.
+
+   For example, use cron to run the script every 5 minutes:
+   ```
+    */30 8-19 * * * /usr/bin/python3 /home/pi/solar-smart-plug/solarsmartplug.py
+   ```
 
 ## Notes
 
