@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Python script integrates solar power monitoring and smart plug control to optimize energy usage. The script fetches real-time solar power data from the SolarEdge API and utilizes the information to intelligently manage a smart plug. The goal is to automate the plug's state based on solar power levels, enhancing energy efficiency and sustainability.
+This Python script integrates solar power monitoring and smart plug control with a view to optimize energy usage. The script fetches real-time solar power data from the SolarEdge API and utilizes the information to manage the D-LINK W115 smart plug. The goal is to automate the plug's state based on solar power levels, enhancing energy efficiency and sustainability.
 
 ## Features
 
