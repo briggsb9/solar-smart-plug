@@ -25,10 +25,10 @@ Create an `advisorConfig.py` file to include your API keys, Telegram bot details
 
 ## Usage
 
-Schedule the script using CRON at 15min intervals to ensure the optimal time window is identified as early as possible. For example:
+Schedule the script using CRON at 15min intervals between usefull hours (7am - 7pm) to ensure the optimal time window is identified as early as possible. For example:
 
 ``` cron
-0 8 * * * /path/to/python3 /path/to/solarAdvisor.py
+*/15 7-19 * * * /path/to/python3 /path/to/solarAdvisor.py
 ```
 
 Replace /path/to/python3 with the actual path to your Python interpreter (e.g., /usr/bin/python3), and replace /path/to/solarAdvisor.py with the full path to your Python script.
