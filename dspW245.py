@@ -196,7 +196,7 @@ class SmartPlug:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(10)
 
-        # Add SSL context configuration
+        # Add SSL context configuration to work round local SSL errors.
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.set_ciphers('DEFAULT')
