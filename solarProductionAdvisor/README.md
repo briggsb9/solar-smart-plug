@@ -1,6 +1,8 @@
-# Solar Advisor - Daily Solar Production Estimates
+# Solar Advisor - Daily Solar Production Estimates based on weather and panel orientation
 
 The Solar Advisor is a Python script designed to fetch solar production estimates and send relevant information to a Telegram group chat. It leverages the [Forecast Solar API](https://doc.forecast.solar/api:estimate) to estimate solar power production based on geographical coordinates, azimuth, tilt, and capacity.
+
+In the absense of detailed realtime monitoring, this approach could be used to automate the operation of electrical devices (e.g., pool pumps, electric vehicle charging) to maximise the use of solar power.
 
 ## Features
 
@@ -15,7 +17,7 @@ Before using the script, ensure you have the following:
 - Python 3.x installed
 - Required Python packages (install with `pip install -r requirements.txt`)
 - Telegram App installed registered on your mobile device https://telegram.org/apps
-- Telegram bot. Create using this guide https://core.telegram.org/bots#6-botfather
+- Telegram group chat and bot. Create using this guide https://core.telegram.org/bots#6-botfather
 
 ## Configuration
 
@@ -30,3 +32,5 @@ Schedule the script using CRON to send a message each day so residents know the 
 ```
 
 Replace /path/to/python3 with the actual path to your Python interpreter (e.g., /usr/bin/python3), and replace /path/to/solarAdvisor.py with the full path to your Python script.
+
+Could also be used in an Azure Function or similar for serverless operation.
