@@ -1,6 +1,6 @@
 # Solar Advisor - Daily Solar Production Estimates based on weather and panel orientation
 
-The Solar Advisor is a Python script designed to fetch solar production estimates and send relevant information to a Telegram group chat. It leverages the [Forecast Solar API](https://doc.forecast.solar/api:estimate) to estimate solar power production based on geographical coordinates, azimuth, tilt, and capacity.
+The Solar Advisor is a Python integration script designed to fetch solar production estimates and send relevant information to a Telegram group chat. It leverages the [Forecast Solar API](https://doc.forecast.solar/api:estimate) to estimate solar power production based on geographical coordinates, azimuth, tilt, and capacity.
 
 In the absense of detailed realtime monitoring, this approach could be used to automate the operation of electrical devices (e.g., pool pumps, electric vehicle charging) to maximise the use of solar power.
 
