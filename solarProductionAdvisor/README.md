@@ -8,7 +8,7 @@ In the absence of detailed realtime monitoring, this approach could also be used
 
 - Fetches solar production estimates from the Forecast Solar API.
 - Identifies the optimal time window with the highest cumulative solar output for the current day and sends a daily message to a Telegram group chat.
-- Sends additional messages to notify the start and end of the optimal time window.
+- Checks if the current actual power output is greater than or equal to the expected peak power output and sends a message if it is.
 
 ## Prerequisites
 
@@ -16,6 +16,7 @@ Before using the script, ensure you have the following:
 
 - Python 3.x installed
 - Required Python packages (install with `pip install -r requirements.txt`)
+- SolarEdge API access. Create using this guide https://www.solaredge.com/sites/default/files/se_monitoring_api.pdf
 - Telegram App installed registered on your mobile device https://telegram.org/apps
 - Telegram group chat and bot. Create using this guide https://core.telegram.org/bots#6-botfather
 
@@ -25,7 +26,7 @@ Create an `advisorConfig.py` file to include your API keys, Telegram bot details
 
 ## Usage
 
-Schedule the script using CRON at 15min intervals between usefull hours (7am - 7pm) to ensure the optimal time window is identified as early as possible. For example:
+Schedule the script using CRON at 15min intervals between useful hours (7am - 7pm) to ensure the optimal time window is identified as early as possible. For example:
 
 ``` cron
 */15 7-19 * * * /path/to/python3 /path/to/solarAdvisor.py
