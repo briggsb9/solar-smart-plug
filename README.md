@@ -8,7 +8,7 @@ Without the addition of consumption monitoring to measure available power, this 
 
 
 > **Note:**
-> For more a more manual approach, I've also created a Solar Production Forecast Advisor that integrates weather and panel orientation forecast data to notify residents of the best time of day to use/charge electrical devices, see [solarProductionAdvisor/README.md](solarProductionAdvisor/README.md)
+> "For a more manual approach, I've developed a Solar Production Forecast Advisor. This tool incorporates weather conditions and panel orientation forecasts to notify residents about the optimal times of the day for using or charging electrical devices. See [solarProductionAdvisor/README.md](solarProductionAdvisor/README.md)
 
 ## Features
 
