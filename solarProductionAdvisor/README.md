@@ -1,12 +1,12 @@
-# Solar Advisor Script
+# Solar Advisor - Daily Solar Production Estimates
 
-The Solar Advisor script is a Python script designed to fetch solar production estimates and send relevant information to a Telegram channel. It leverages the [Forecast Solar API](https://doc.forecast.solar/api:estimate) to estimate solar power production based on geographical coordinates, azimuth, tilt, and capacity.
+The Solar Advisor is a Python script designed to fetch solar production estimates and send relevant information to a Telegram group chat. It leverages the [Forecast Solar API](https://doc.forecast.solar/api:estimate) to estimate solar power production based on geographical coordinates, azimuth, tilt, and capacity.
 
 ## Features
 
 - Fetches solar production estimates from the Forecast Solar API.
-- Identifies the time window with the highest cumulative solar output for the current day.
-- Sends a summary message to a Telegram channel with the identified optimal solar output period.
+- Identifies the optimal time window with the highest cumulative solar output for the current day.
+- Sends a summary message to a Telegram group chat with the identified optimal solar output period.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ Before using the script, ensure you have the following:
 
 ## Configuration
 
-Create an `advisorConfig.py` file to include your API keys, Telegram bot details, and any other necessary configuration parameters.
+Create an `advisorConfig.py` file to include your API keys, Telegram bot details, and other necessary configuration parameters. See example-advisorConfig.py for an example.
 
 ## Usage
 
