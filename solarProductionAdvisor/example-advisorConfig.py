@@ -14,6 +14,10 @@ test_json_path = './test.json'
 solar_data_file = './solar_data.json' # Path to save solar data to. Overwritten at 8pm every day.
 ignore_time_constraint = False # Ignore time constraint for testing purposes
 
+# Variables for SolarEdge monitoring
+solar_edge_api_key = 'YOURAPIKEY' 
+solar_edge_endpoint = 'https://monitoringapi.solaredge.com/site/YOURSIDEID/overview?'
+
 # Variables for the Telegram bot
 token = 'YOURTOKEN'
 chat_id = 'YOURCHATID'

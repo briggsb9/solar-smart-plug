@@ -77,7 +77,7 @@ def analyze_solar_data(solar_data):
     # Find the start of the window, ensuring a build-up to peak power
     for i in range(build_up_hours + 1):
         current_hour = (datetime.strptime(peak_hour, '%Y-%m-%d %H:%M:%S') - timedelta(hours=i)).strftime('%Y-%m-%d %H:%M:%S')
-        if current_hour in today_data and today_data[current_hour] >= 0.8 * peak_power:
+        if current_hour in today_data and today_data[current_hour] >= 0.6 * peak_power:
             window_start = current_hour
         else:
             break
@@ -85,10 +85,10 @@ def analyze_solar_data(solar_data):
     # Find the end of the window, ensuring a decrease in power after peak
     for i in range(1, len(today_data)):
         current_hour = (datetime.strptime(peak_hour, '%Y-%m-%d %H:%M:%S') + timedelta(hours=i)).strftime('%Y-%m-%d %H:%M:%S')
-        if current_hour in today_data and today_data[current_hour] >= 0.8 * peak_power:
+        if current_hour in today_data and today_data[current_hour] >= 0.6 * peak_power:
             window_end = current_hour
         else:
-            if today_data[current_hour] < 0.8 * peak_power:
+            if today_data[current_hour] < 0.6 * peak_power:
                 break
 
     # Save analysis data directly within the function
@@ -102,6 +102,22 @@ def analyze_solar_data(solar_data):
         json.dump(analysis_data, analysis_file)
 
     return peak_hour, peak_power, window_start, window_end
+
+def get_solar_power(api_url, api_key):
+    try:
+        params = {'api_key': api_key}
+        response = requests.get(api_url, params=params)
+        response.raise_for_status()  # Raise an exception for bad requests
+        solar_data = response.json()
+
+        # Extract current power information
+        current_power = solar_data['overview']['currentPower']['power']
+
+        return current_power
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error fetching data from the API: {e}")
+        return None
 
 def send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end):
     """
@@ -130,7 +146,7 @@ def send_message_to_telegram(message):
 def main():
     current_time = datetime.now().strftime('%H:%M:%S')
 
-    # Check if the current time is between 8 am and 8:15 am or if the time constraint is ignored
+    # Check if the current time is between 8 am and 8:15 am or if the time constraint is ignored or data file does not exist
     if advisorConfig.ignore_time_constraint or '08:00:00' <= current_time <= '08:15:00' or not os.path.exists(advisorConfig.solar_data_file):
         # Run the function to fetch solar production data
         solar_data = fetch_solar_production()
@@ -149,26 +165,13 @@ def main():
             else:
                 logging.info("Not sending daily summary message. Past 8:10 am.")
 
-            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-            # Define a time window (in minutes) around the optimal period start/stop time
-            time_window_minutes = 15
-
-            # Check if the current time is within the time window of the optimal period start
-            if (
-                datetime.strptime(optimal_period_start, '%Y-%m-%d %H:%M:%S') - timedelta(minutes=time_window_minutes)
-                <= datetime.strptime(current_time, '%Y-%m-%d %H:%M:%S')
-                <= datetime.strptime(optimal_period_start, '%Y-%m-%d %H:%M:%S') + timedelta(minutes=time_window_minutes)
-            ):
-                send_telegram_message("The optimal solar output period for today is about to start. Get ready!")
-
-            # Check if the current time is within the time window of the optimal period end
-            if (
-                datetime.strptime(optimal_period_end, '%Y-%m-%d %H:%M:%S') - timedelta(minutes=time_window_minutes)
-                <= datetime.strptime(current_time, '%Y-%m-%d %H:%M:%S')
-                <= datetime.strptime(optimal_period_end, '%Y-%m-%d %H:%M:%S') + timedelta(minutes=time_window_minutes)
-            ):
-                send_telegram_message("The optimal solar output period for today is about to end!")
+            # Check if the current power output is greater than or equal to the expected peak power output
+            current_power = get_solar_power(advisorConfig.solar_edge_endpoint, advisorConfig.solar_edge_api_key)
+            if current_power >= peak_power:
+                send_message_to_telegram(f"Current power output ({current_power}) is greater than or equal to the expected peak power output ({peak_power}).")
+                logging.info(f"Current power output ({current_power}) is greater than or equal to the expected peak power output ({peak_power}).")
+            else:
+                logging.info(f"Current power output ({current_power}) is less than the expected peak power output ({peak_power}).")
 
         else:
             logging.warning("No peak hour found.")
