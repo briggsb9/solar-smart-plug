@@ -91,6 +91,16 @@ def analyze_solar_data(solar_data):
             if today_data[current_hour] < 0.8 * peak_power:
                 break
 
+    # Save analysis data directly within the function
+    analysis_data = {
+        "peak_hour": peak_hour,
+        "peak_power": peak_power,
+        "window_start": window_start,
+        "window_end": window_end
+    }
+    with open("analysis_data.json", "w") as analysis_file:
+        json.dump(analysis_data, analysis_file)
+
     return peak_hour, peak_power, window_start, window_end
 
 def send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end):
