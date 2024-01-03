@@ -131,7 +131,7 @@ def main():
     current_time = datetime.now().strftime('%H:%M:%S')
 
     # Check if the current time is between 8 am and 8:15 am or if the time constraint is ignored
-    if advisorConfig.ignore_time_constraint or '08:00:00' <= current_time <= '08:15:00':
+    if advisorConfig.ignore_time_constraint or '08:00:00' <= current_time <= '08:15:00' or not os.path.exists(advisorConfig.solar_data_file):
         # Run the function to fetch solar production data
         solar_data = fetch_solar_production()
         save_solar_data(solar_data)
