@@ -2,13 +2,13 @@
 
 The Solar Advisor is a Python integration script designed to fetch solar production estimates and send relevant information to a Telegram group chat. It leverages the [Forecast Solar API](https://doc.forecast.solar/api:estimate) to estimate solar power production based on geographical coordinates, azimuth, tilt, and capacity.
 
-In the absense of detailed realtime monitoring, this approach could be used to automate the operation of electrical devices (e.g., pool pumps, electric vehicle charging) to maximise the use of solar power.
+In the absence of detailed realtime monitoring, this approach could also be used to automate the operation of electrical devices (e.g., pool pumps, electric vehicle charging) to maximise the use of solar power.
 
 ## Features
 
 - Fetches solar production estimates from the Forecast Solar API.
-- Identifies the optimal time window with the highest cumulative solar output for the current day.
-- Sends a summary message to a Telegram group chat with the identified optimal solar output period.
+- Identifies the optimal time window with the highest cumulative solar output for the current day and sends a daily message to a Telegram group chat.
+- Sends additional messages to notify the start and end of the optimal time window.
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ Create an `advisorConfig.py` file to include your API keys, Telegram bot details
 
 ## Usage
 
-Schedule the script using CRON to send a message each day so residents know the best time to operate/charge electrical devices manually.
+Schedule the script using CRON at 15min intervals to ensure the optimal time window is identified as early as possible. For example:
 
 ``` cron
 0 8 * * * /path/to/python3 /path/to/solarAdvisor.py

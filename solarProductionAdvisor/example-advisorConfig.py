@@ -11,6 +11,8 @@ solar_forecast_api_key = ''
 solar_forecast_endpoint = 'https://api.forecast.solar/estimate/watts/LAT/LONG/AZIMUTH/TILT/CAPACITY' # (lat, long, azimuth, tilt, capacity)
 use_test_data = False # Use test data from test.json instead of API
 test_json_path = './test.json'
+solar_data_file = './solar_data.json' # Path to save solar data to. Overwritten at 8pm every day.
+ignore_time_constraint = False # Ignore time constraint for testing purposes
 
 # Variables for the Telegram bot
 token = 'YOURTOKEN'

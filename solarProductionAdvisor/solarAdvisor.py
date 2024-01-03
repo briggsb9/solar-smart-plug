@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, timedelta
 import advisorConfig  # Import all variables from the config module
 import json
+import os
 
 # Set up logging
 logging.basicConfig(filename=advisorConfig.logfile, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -30,6 +31,29 @@ def fetch_solar_production():
         return solar_data
     except Exception as e:
         logging.error(f"Error fetching solar production: {e}")
+        return None
+    
+def save_solar_data(solar_data):
+    """
+    Save solar data to a local JSON file.
+    """
+    try:
+        with open(advisorConfig.solar_data_file, 'w') as file:
+            json.dump(solar_data, file)
+        logging.info("Solar data saved successfully.")
+    except Exception as e:
+        logging.error(f"Error saving solar data: {e}")
+    
+def load_saved_solar_data():
+    """
+    Load saved solar data from the file.
+    """
+    if os.path.exists(advisorConfig.solar_data_file):
+        with open(advisorConfig.solar_data_file, 'r') as file:
+            solar_data = json.load(file)
+        return solar_data
+    else:
+        logging.warning("Saved solar data file not found.")
         return None
 
 def analyze_solar_data(solar_data):
@@ -94,14 +118,48 @@ def send_message_to_telegram(message):
         logging.error(f"Error sending message to Telegram channel: {e}")
 
 def main():
+    current_time = datetime.now().strftime('%H:%M:%S')
 
-    solar_data = fetch_solar_production()
+    # Check if the current time is between 8 am and 8:15 am or if the time constraint is ignored
+    if advisorConfig.ignore_time_constraint or '08:00:00' <= current_time <= '08:15:00':
+        # Run the function to fetch solar production data
+        solar_data = fetch_solar_production()
+        save_solar_data(solar_data)
+    else:
+        # Use saved solar data for other times
+        solar_data = load_saved_solar_data()
 
     if solar_data is not None:
         peak_hour, peak_power, optimal_period_start, optimal_period_end = analyze_solar_data(solar_data)
-        
+
         if peak_hour is not None:
-            send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end)
+            # Send the daily summary message
+            if '08:00:00' <= current_time <= '08:10:00':
+                send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end)
+            else:
+                logging.info("Not sending daily summary message. Past 8:10 am.")
+
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            # Define a time window (in minutes) around the optimal period start/stop time
+            time_window_minutes = 15
+
+            # Check if the current time is within the time window of the optimal period start
+            if (
+                datetime.strptime(optimal_period_start, '%Y-%m-%d %H:%M:%S') - timedelta(minutes=time_window_minutes)
+                <= datetime.strptime(current_time, '%Y-%m-%d %H:%M:%S')
+                <= datetime.strptime(optimal_period_start, '%Y-%m-%d %H:%M:%S') + timedelta(minutes=time_window_minutes)
+            ):
+                send_telegram_message("The optimal solar output period for today is about to start. Get ready!")
+
+            # Check if the current time is within the time window of the optimal period end
+            if (
+                datetime.strptime(optimal_period_end, '%Y-%m-%d %H:%M:%S') - timedelta(minutes=time_window_minutes)
+                <= datetime.strptime(current_time, '%Y-%m-%d %H:%M:%S')
+                <= datetime.strptime(optimal_period_end, '%Y-%m-%d %H:%M:%S') + timedelta(minutes=time_window_minutes)
+            ):
+                send_telegram_message("The optimal solar output period for today is about to end!")
+
         else:
             logging.warning("No peak hour found.")
     else:
