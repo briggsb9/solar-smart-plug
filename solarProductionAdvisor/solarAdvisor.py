@@ -163,7 +163,7 @@ def main():
 
         if peak_hour is not None:
             # Send the daily summary message
-            if '08:00:00' <= current_time <= '08:10:00':
+            if advisorConfig.ignore_time_constraint or '08:00:00' <= current_time <= '08:10:00':
                 send_telegram_message(peak_hour, peak_power, optimal_period_start, optimal_period_end)
             else:
                 logging.info("Not sending daily summary message. Past 8:10 am.")
