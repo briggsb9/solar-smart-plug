@@ -2,19 +2,18 @@
 
 ## Overview
 
-This Python script integrates solar power monitoring and smart plug control with a view to optimize energy usage. It fetches real-time solar power data from the SolarEdge API and utilizes the information to manage the D-LINK W115 smart plug. The goal is to automate the plug's state based on solar power levels, enhancing energy efficiency and sustainability.  
+This Python script fetches real-time solar power data from the SolarEdge API and utilizes the information to manage the D-LINK W115 smart plug. The goal is to optimise leisure/device battery charging when solar output is high. 
 
-Without the addition of consumption monitoring to measure available power, this approach does have its downsides, but it's a start for those without a full home energy management system.
-
+Without the addition of consumption monitoring to measure available power, this approach does have its downsides, but it's a start for those without access to realtime consumption data.
 
 > **Note:**
-> "For a more manual approach, I've developed a Solar Production Forecast Advisor. This tool incorporates weather conditions and panel orientation forecasts to notify residents about the optimal times of the day for using or charging electrical devices. See [solarProductionAdvisor/README.md](solarProductionAdvisor/README.md)
+> "For a more manual approach, I've developed a Solar Production Forecast Advisor. This tool incorporates geography and panel orientation forecasts to notify residents about the optimal times of the day for using or charging electrical devices. See [solarProductionAdvisor/README.md](solarProductionAdvisor/README.md)
 
 ## Features
 
 - **Solar Power Monitoring:**
   - Fetches current solar power data from the SolarEdge API.
-  - Logs data and status to a specified log file for future analysis.
+  - Logs data and status to a specified log file.
 
 - **Smart Plug Automation:**
   - Controls a smart plug based on the retrieved solar power information.
