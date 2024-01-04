@@ -8,7 +8,7 @@ logfile = './solar-production-advisor-log.log'
 
 # Variables for Solar production forecasting. Currently using: https://doc.forecast.solar/api:estimate 
 solar_forecast_api_key = '' 
-solar_forecast_endpoint = 'https://api.forecast.solar/estimate/watts/LAT/LONG/AZIMUTH/TILT/CAPACITY' # (lat, long, azimuth, tilt, capacity)
+solar_forecast_endpoint = 'https://api.forecast.solar/estimate/watts/LAT/LONG/AZIMUTH/TILT/CAPACITY' # (lat, long, tilt, azimuth, capacity)
 use_test_data = False # Use test data from test.json instead of API
 test_json_path = './test.json'
 solar_data_file = './solar_data.json' # Path to save solar data to. Overwritten at 8pm every day.
