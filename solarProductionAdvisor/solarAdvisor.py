@@ -102,8 +102,14 @@ def analyze_solar_data(solar_data):
         "window_start": window_start,
         "window_end": window_end
     }
-    with open("analysis_data.json", "w") as analysis_file:
-        json.dump(analysis_data, analysis_file)
+   
+    file_path = "analysis_data.json"
+    try:
+        with open(file_path, "w") as analysis_file:
+            json.dump(analysis_data, analysis_file, indent=2)
+        logging.info(f"Analysis data saved successfully to: {file_path}")
+    except Exception as e:
+        logging.error(f"Error saving analysis data: {e}")
 
     return peak_hour, peak_power, window_start, window_end
 
