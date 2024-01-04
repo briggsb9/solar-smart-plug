@@ -28,6 +28,10 @@ def fetch_solar_production():
         response.raise_for_status()
         solar_data = response.json()["result"]
         logging.info("Fetching data from the actual API.")
+
+        # Save solar data only if the API call was successful
+        save_solar_data(solar_data)
+
         return solar_data
     except Exception as e:
         logging.error(f"Error fetching solar production: {e}")
@@ -150,7 +154,6 @@ def main():
     if advisorConfig.ignore_time_constraint or '08:00:00' <= current_time <= '08:15:00' or not os.path.exists(advisorConfig.solar_data_file):
         # Run the function to fetch solar production data
         solar_data = fetch_solar_production()
-        save_solar_data(solar_data)
     else:
         # Use saved solar data for other times
         solar_data = load_saved_solar_data()
