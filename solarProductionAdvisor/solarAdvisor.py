@@ -30,23 +30,23 @@ def fetch_solar_production():
         logging.info("Fetching data from the actual API.")
 
         # Save solar data only if the API call was successful
-        save_solar_data(solar_data)
+        save_data_to_file(solar_data, advisorConfig.solar_data_file, "Solar data")
 
         return solar_data
     except Exception as e:
         logging.error(f"Error fetching solar production: {e}")
         return None
-    
-def save_solar_data(solar_data):
+
+def save_data_to_file(data, file_path, description="Data"):
     """
-    Save solar data to a local JSON file.
+    Save data to a local JSON file.
     """
     try:
-        with open(advisorConfig.solar_data_file, 'w') as file:
-            json.dump(solar_data, file)
-        logging.info("Solar data saved successfully.")
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=2)
+        logging.info(f"{description} saved successfully to: {file_path}")
     except Exception as e:
-        logging.error(f"Error saving solar data: {e}")
+        logging.error(f"Error saving {description.lower()}: {e}")
     
 def load_saved_solar_data():
     """
@@ -103,13 +103,7 @@ def analyze_solar_data(solar_data):
         "window_end": window_end
     }
    
-    file_path = "analysis_data.json"
-    try:
-        with open(file_path, "w") as analysis_file:
-            json.dump(analysis_data, analysis_file, indent=2)
-        logging.info(f"Analysis data saved successfully to: {file_path}")
-    except Exception as e:
-        logging.error(f"Error saving analysis data: {e}")
+    save_data_to_file(analysis_data, advisorConfig.analysis_data_file, "Analysis data")
 
     return peak_hour, peak_power, window_start, window_end
 

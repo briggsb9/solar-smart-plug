@@ -12,6 +12,7 @@ solar_forecast_endpoint = 'https://api.forecast.solar/estimate/watts/LAT/LONG/AZ
 use_test_data = False # Use test data from test.json instead of API
 test_json_path = './test.json'
 solar_data_file = './solar_data.json' # Path to save solar data to. Overwritten at 8pm every day.
+analysis_data_file = './analysis_data.json' # Path to save analysis data to. Overwritten at each run.
 ignore_time_constraint = False # Ignore time constraint for testing purposes
 
 # Variables for SolarEdge monitoring
